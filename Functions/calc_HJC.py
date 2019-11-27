@@ -3,7 +3,7 @@ Calculate the hip joint centre, as defined by Gamage, Lasenby J. (2002)
 
 '''
 
-__author__ = "Andrea Cereatti, Alex Woodall"
+__author__ = "Andrea Cereatti, Alex Woodall and omkar"
 
 import numpy as np
 from distance import distance
@@ -52,7 +52,7 @@ def calc_HJC(TrP):
 	p = np.size(V1,2)
 
 	e1 = 0
-	E = np.zeros(3)
+	E = np.zeros((3,3))
 	f1 = np.array([0, 0, 0])
 	F = np.array([0, 0, 0])
 
