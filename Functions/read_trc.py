@@ -56,7 +56,7 @@ def read_trc():
 	root = tk.Tk()
 	root.withdraw()
 
-	file_path = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("trc files","*.trc"),("all files","*.*")))
+	file_path = filedialog.askopenfilename(initialdir = "r",title = "Select file",filetypes = (("trc files","*.trc"),("all files","*.*")))
 
 	# Split into file_name and path_name
 
@@ -66,7 +66,7 @@ def read_trc():
 	if not file_name.strip(): # If the user selects 'cancel'
 		# Display a message and reprompt the user to select a file
 		print('You have selected ''Cancel''. Please select a TRC file.')
-		file_path = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("trc files","*.trc"),("all files","*.*")))
+		file_path = filedialog.askopenfilename(initialdir = "r",title = "Select file",filetypes = (("trc files","*.trc"),("all files","*.*")))
 
 		# Split into file_name and path_name
 
