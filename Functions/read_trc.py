@@ -22,8 +22,8 @@ def read_trc():
 
 	Output Structure Format:
 
-	trcContents (Class): 
-		Information (Class): Field names and values populated from the 2nd and 3rd file header lines; Number of fields and
+	trcContents (Dictionary): 
+		Information (Dictionary): Field names and values populated from the 2nd and 3rd file header lines; Number of fields and
 							field names may vary.
 			FileName (1x? char): From filedialog.askopenfilename (e.g., 'Static.trc')
 			PathName (1x? char): From filedialog.askopenfilename (e.g., 'C://Users//')
@@ -36,14 +36,14 @@ def read_trc():
 			DataStartFrame (1x1 uint32): Starting frame number (sometimes seen as 'OrigDataStartFrame')
 			OrigNumFrames (1x1 uint32): Original number of frames (sometimes not in TRC file)
 
-		Data (Class): Data from the remaining TRC file entries
+		Data (Dictionary): Data from the remaining TRC file entries
 			MarkerLabels (NumMarkers x 1 list): String list containing all unmodified marker labels
 			ModifiedMarkerLabels (NumMarkers x 1 list): Modified marker labels (i.e., without '.' & ':' chars for use in 'Markers' Class)
 			FrameNums (NumFrames x 1 uint32): 1d array of frame numbers
 			Time (NumFrames x 1 float32): 1d array of time values (based on the DataRate)
 			RawData (NumFrames x (3*NumMarkers) float64): ndarray of all raw data
-			Markers (Class): All modified marker labels and their corresponding 3D coordinate data
-				ModifiedMarkerLabels{n} (Class) nth marker containing X, Y, Z coordinate values
+			Markers (Dictionary): All modified marker labels and their corresponding 3D coordinate data
+				ModifiedMarkerLabels{n} (Dictionary) nth marker containing X, Y, Z coordinate values
 					X: (NumFrames x 1 float64): 1d array of X coordinate values for the marker
 					Y: (NumFrames x 1 float64): 1d array of Y coordinate values for the marker
 					Z: (NumFrames x 1 float64): 1d array of Z coordinate values for the marker
@@ -81,8 +81,6 @@ def read_trc():
 	
 	# Open trc file with read only access
 	trc_fid = open(os.path.join(path_name, file_name),'r')
-
-	# Throw exception if there is an error TODO
 
 	# Process first four header lines and store all entries as strings. The fifth (last) header line only 
 	# contains X,Y,Z and marker numbers.
