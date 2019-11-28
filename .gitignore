@@ -9,6 +9,8 @@ In\ Progress.txt
 To\ do.txt
 771_workspace.code-workspace
 
+*.vscode
+
 # Byte-compiled / optimized / DLL files
 
 __pycache__/
