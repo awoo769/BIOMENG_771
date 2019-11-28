@@ -3,7 +3,7 @@ Calculate the hip joint centre, as defined by Gamage, Lasenby J. (2002)
 
 '''
 
-__author__ = "Andrea Cereatti, Alex Woodall and omkar"
+__author__ = "Andrea Cereatti, Alex Woodall"
 
 import numpy as np
 from distance import distance
@@ -28,89 +28,106 @@ def calc_HJC(TrP):
                 Halvorsen correzione bias
 	'''
 
-	r, c = np.size(TrP)
-	D = np.zeros(3)
-	V2 = np.array([])
+	r, c = np.shape(TrP)
+	D = np.zeros((3,3))
+	V2 = []
 	b1 = np.array([0, 0, 0])
 
-	for j in range (1, 3, c):
-		d1 = np.zeros(3)
+	for j in range (0, c, 3):
+		d1 = np.zeros((3,3))
+		V2a = 0
+		V3a = np.array([0, 0, 0])
 
-		for i in range(1, r):
-			d1 = np.array([d1 + np.transpose(TrP[i-1,(j-1):(j+1)]) * TrP[i-1,(j-1):(j+1)]])
-			a = np.power(TrP[(i-1),(j-1)],2) + np.power(TrP[i-1,j],2) + np.power(TrP[i-1,j+1],2)
+		for i in range(r):
+
+			tmp = (TrP[i,j:(j+3)])[:,np.newaxis]
+
+			d1 = d1 + np.matmul(tmp,tmp.transpose())
+
+			a = np.power(TrP[i,j],2) + np.power(TrP[i,j+1],2) + np.power(TrP[i,j+2],2)
 			V2a = V2a + a
-			V3a = V3a + a*TrP[i-1,(j-1):(j+1)]
+			V3a = V3a + a*TrP[i,j:(j+3)]
 
 		D = D + d1/r
 
-		V2 = np.array([V2, V2a/r])
+		V2.append(V2a/r)
 		b1 = b1 + V3a/r
 
-	V1 = np.mean(TrP)
+	# Convert V2 to array
+	V2 = np.array(V2)
+
+	V1 = np.mean(TrP,axis=0)
 	
-	p = np.size(V1,2)
+	p = np.size(V1)
 
 	e1 = 0
 	E = np.zeros((3,3))
 	f1 = np.array([0, 0, 0])
 	F = np.array([0, 0, 0])
 
-	for k in range(1,3,p):
-		e1 = np.transpose(V1[(k-1):(k+1)]) * V1[(k-1):(k+1)]
+	for k in range(0,p,3):
+
+		tmp = (V1[k:(k+3)])[:,np.newaxis]
+
+		e1 = np.matmul(tmp,tmp.transpose())
 		E = E + e1
-		f1 = V2[(k-2)/3 + 1] * V1[(k-1):(k+1)]
+		f1 = V2[int(k/3)] * V1[k:(k+3)]
 		F = F + f1
 
 	# Equation 5 of Gamage and Lasenby
 	A = 2 * (D - E)
-	B = np.transpose(b1 - F)
+	B = (np.transpose(b1 - F))[:,np.newaxis]
 	U, S, V = np.linalg.svd(A)
 
-	Cm_in = V * np.linalg.inv(S) * np.transpose(U) * B
-	Cm_old = Cm_in + np.transpose(np.array([1, 1, 1]))
+	# Convert S to a diagonal matrix
+	S = np.diag(S)
+	V = np.transpose(V)
+
+	Cm_in = np.matmul(np.matmul(V,np.linalg.inv(S)), np.matmul(np.transpose(U), B))
+	Cm_old = Cm_in + (np.transpose(np.array([1, 1, 1])))[:,np.newaxis]
 
 	while distance(np.transpose(Cm_old), np.transpose(Cm_in)) > 0.0000001:
 		Cm_old = Cm_in
-		sigma2 = np.array([])
+		sigma2 = []
 
-		for j in range(1,3,c):
-			marker = TrP[:,(j-1):(j+1)]
-			Ukp = marker - np.transpose(Cm_in * np.ones(1,r))
+		for j in range(0,c,3):
+			marker = TrP[:,j:(j+3)]
+			Ukp = marker - np.transpose(Cm_in * np.ones((1,r)))
 
 			# Computation of u^2
 			u2 = 0
-			app = np.array([])
+			app = []
 
-			for i in range(1,r):
-				u2 = u2 + Ukp[i-1,:] * np.transpose(Ukp[i-1,:])
+			for i in range(r):
+				u2 = u2 + np.matmul(Ukp[i,:], np.transpose(Ukp[i,:]))
+				app.append(np.matmul(Ukp[i,:], np.transpose(Ukp[i,:])))
 			
 			u2 = u2/r
 
 			# Computation of sigma
 			sigmaP = 0
 
-			for i in range(1,r):
-				sigmaP = sigmaP + np.power((app[i-1] - u2),2)
+			for i in range(r):
+				sigmaP = sigmaP + np.power((app[i] - u2), 2)
 			
 			sigmaP = sigmaP/(4 * u2 * r)
-			sigma2 = np.array([np.transpose(sigma2), sigmaP])
+			sigma2.append(sigmaP)
 
-			# Computation of deltaB
-			deltaB = 0
+		sigma2 = np.mean(sigma2)
 
-			for j in range(1,3,c):
-				deltaB = deltaB + np.transpose(V1[(j-1):(j+1)]) - Cm_in
-			
-			deltaB = 2 * sigma2 * deltaB
+		# Computation of deltaB
+		deltaB = 0
 
-			Bcorr = B - deltaB # Corrected term B
-			
-			# Iterative estimation of the centre of rotation
-			U, S, V = np.linalg.svd(A)
-
-			Cm_in = V * np.linalg.inv(S) * np.transpose(U) * Bcorr
+		for j in range(0,c,3):
+			deltaB = deltaB + (np.transpose(V1[j:(j+3)]))[:,np.newaxis] - Cm_in
 		
-		Cm = Cm_in
+		deltaB = 2 * sigma2 * deltaB
+
+		Bcorr = B - deltaB # Corrected term B
+		
+		# Iterative estimation of the centre of rotation
+		Cm_in = np.matmul(np.matmul(V,np.linalg.inv(S)), np.matmul(np.transpose(U), Bcorr))
+	
+	Cm = Cm_in
 
 	return Cm
