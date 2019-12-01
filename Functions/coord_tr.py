@@ -1,7 +1,7 @@
 
 import numpy as np
 
-def coord_tr(org, dist, prox, med, lat, xyz, f):
+def coord_tr(org: np.ndarray, dist: np.ndarray, prox: np.ndarray, med: np.ndarray, lat: np.ndarray, xyz: np.ndarray, f: int):
 
 	'''
 	The input to the function coord_tr are 5 anatomical points, expressed in the global coordinate system

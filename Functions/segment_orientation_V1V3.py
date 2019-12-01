@@ -1,7 +1,7 @@
 
 import numpy as np
 
-def segment_orientation_V1V3(V1,V3):
+def segment_orientation_V1V3(V1: np.ndarray,V3: np.ndarray):
 
 	e1 = np.zeros((len(V1),3))
 	e2 = np.zeros((len(V1),3))

@@ -8,7 +8,7 @@ __author__ = "Andrea Cereatti, Alex Woodall"
 import numpy as np
 from distance import distance
 
-def calc_HJC(TrP):
+def calc_HJC(TrP: np.ndarray):
 	'''
 	This function calculates the hip joint centre (HJC)
 
@@ -131,3 +131,4 @@ def calc_HJC(TrP):
 	Cm = Cm_in
 
 	return Cm
+	

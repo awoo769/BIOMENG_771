@@ -139,7 +139,7 @@ def read_trc():
 	marker_data = []
 
 	for line in trc_lines[6:]:
-		frame_numbers.append(np.uint32(line.split('\t')[0])) # Get frame number (integer)
+		frame_numbers.append(np.uint32(int(line.split('\t')[0]))) # Get frame number (integer)
 		time.append(np.float32(line.split('\t')[1]))
 		marker_data.append(np.float64(line.rsplit('\t')[2:]))
 	
@@ -188,4 +188,4 @@ def read_trc():
 		trcContents["Data"]["Markers"][mod_marker_labels[i-1]]["Z"] = marker_data[:,i*3 - 1]
 		trcContents["Data"]["Markers"][mod_marker_labels[i-1]]["All"] = marker_data[:,(i*3 - 3):(i*3)]
 
-	return trcContents
+	return trcContents, file_path

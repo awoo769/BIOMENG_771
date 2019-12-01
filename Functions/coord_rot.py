@@ -1,7 +1,7 @@
 
 import numpy as np
 
-def coord_rot(org, dist, prox, med, lat, xyz, f):
+def coord_rot(org: np.ndarray, dist: np.ndarray, prox: np.ndarray, med: np.ndarray, lat: np.ndarray, xyz: np.ndarray, f: int):
 	
 	'''
 	The input to the function coord_rot are 5 anatomical points, expressed in the global coordinate system

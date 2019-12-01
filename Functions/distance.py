@@ -4,7 +4,7 @@ __date__ = "November, 1996"
 
 import numpy as np
 
-def distance(XYZ_marker1, XYZ_marker2):
+def distance(XYZ_marker1: np.ndarray, XYZ_marker2: np.ndarray):
 	'''
 	This function calculates the distance between two markers.
 	Input:	XYZmarker1: [X,Y,Z] coordinates of marker 1

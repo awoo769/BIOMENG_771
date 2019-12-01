@@ -10,7 +10,7 @@ __license__ = "ABI"
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_avsd(x,y,sd):
+def plot_avsd(x: np.ndarray, y: np.ndarray, sd: np.ndarray):
 	tmp_x = np.concatenate((x, np.flipud(x), x[0]),axis=None)
 	tmp_y = np.concatenate((y+sd, np.flipud(y - sd), y[0] + sd[0]),axis=None)
 
