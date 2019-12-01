@@ -6,13 +6,16 @@ def write_motion_file(grf_complete, file_path):
 	This file will export the complete ground reaction force data into a _grf.mot file
 	'''
 
+	# Get dimensions of the pre-processed grf data
 	m,n = np.shape(grf_complete)
 
+	# Get new file name
 	new_file = file_path.replace('.csv', '.mot')
 
 	# Split path to get file_name
 	file_name = file_path.rsplit('/',1)[-1]
 
+	# Create new file to write to
 	fid = open(new_file, 'w+')
 
 	# Print header
