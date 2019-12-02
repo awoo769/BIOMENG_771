@@ -13,3 +13,6 @@ KineticsLab contains the functions, notebooks and data required for the Kinetics
 
 ## All
 All contains all of the functions and notebooks, rather than being separated by tutorial or lab
+
+## Tutorial sheets - updated for python
+This contains all the lab tutorial sheets (Lab 1, Lab 3, Lab 4 and Lab 5) which have been updated to include the python functions and jupyter notebooks rather than MATLAB scripts
