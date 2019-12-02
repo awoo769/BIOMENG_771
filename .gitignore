@@ -1,12 +1,5 @@
 # Ignore these folders
 
-KinematicsLabData/
-KineticsLabData/
-OpenSim\ Tutorials/
-Tutorial\ 1/
-Completed.txt
-In\ Progress.txt
-To\ do.txt
 771_workspace.code-workspace
 
 *.vscode
