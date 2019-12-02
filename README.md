@@ -10,3 +10,6 @@ KinematicsLab contains the functions, notebooks and data required for the Kinema
 
 ## KineticsLab
 KineticsLab contains the functions, notebooks and data required for the Kinetics Lab
+
+## All
+All contains all of the functions and notebooks, rather than being separated by tutorial or lab
