@@ -1,4 +1,4 @@
-# BIOMENG771_Python
+# BIOMENG_771
 
 This repository contains the code for BIOMENG 771 for the first half of the course. The code has been converted from MATLAB into Python.
 
