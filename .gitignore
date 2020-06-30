@@ -3,6 +3,7 @@
 771_workspace.code-workspace
 
 *.vscode
+*.idea
 
 # Byte-compiled / optimized / DLL files
 
