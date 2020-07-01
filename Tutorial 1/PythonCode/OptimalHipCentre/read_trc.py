@@ -13,8 +13,9 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 
+
 def read_trc(*file_path: str):
-	"""
+    """
 	Create a class of a TRC marker data file 
 
 	trc_read() returns a class, trcContents (format shown below), containing the contents of the TRC file selected 
@@ -53,156 +54,155 @@ def read_trc(*file_path: str):
 	
 	Example: trcContents = trcRead()
 
-	"""	
+	"""
 
-	# If optional argument is given, don't find filepath, if not, then do
-	if len(file_path) == 0:
-		root = tk.Tk()
-		root.withdraw()
+    # If optional argument is given, don't find filepath, if not, then do
+    if len(file_path) == 0:
+        root = tk.Tk()
+        root.withdraw()
+        root.call('wm', 'attributes', '.', '-topmost', True)
 
-		file_path = filedialog.askopenfilename(initialdir = os.getcwd(),title = "Select file",filetypes = (("trc files","*.trc"),("all files","*.*")))
+        file_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select file",
+                                               filetypes=(("trc files", "*.trc"), ("all files", "*.*")))
 
-	else:
-		# Convert file path tuple to string
-		file_path = str(file_path[0])
+    else:
+        # Convert file path tuple to string
+        file_path = str(file_path[0])
 
-	# Split into file_name and path_name
+    # Split into file_name and path_name
 
-	file_name = file_path.rsplit('/',1)[-1]
-	path_name = file_path.rsplit('/',1)[0]
+    file_name = file_path.rsplit('/', 1)[-1]
+    path_name = file_path.rsplit('/', 1)[0]
 
-	if not file_name.strip(): # If the user selects 'cancel'
-		# Display a message and reprompt the user to select a file
-		print('You have selected ''Cancel''. Please select a TRC file.')
-		file_path = filedialog.askopenfilename(initialdir = os.getcwd(),title = "Select file",filetypes = (("trc files","*.trc"),("all files","*.*")))
+    if not file_name.strip():  # If the user selects 'cancel'
+        # Display a message and re-prompt the user to select a file
+        print('You have selected ''Cancel''. Please select a TRC file.')
+        file_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select file",
+                                               filetypes=(("trc files", "*.trc"), ("all files", "*.*")))
 
-		# Split into file_name and path_name
+        # Split into file_name and path_name
 
-		file_name = file_path.rsplit('/',1)[-1]
-		path_name = file_path.rsplit('/',1)[0]
+        file_name = file_path.rsplit('/', 1)[-1]
+        path_name = file_path.rsplit('/', 1)[0]
 
-		if not file_name.strip(): # If the user selects 'cancel' again
-			# Display a message
-			print('Leaving readTRC')
+        if not file_name.strip():  # If the user selects 'cancel' again
+            # Display a message
+            print('Leaving readTRC')
 
-			return
-	
-	# Open trc file with read only access
-	trc_fid = open(os.path.join(path_name, file_name),'r')
+            return
 
-	# Process first four header lines and store all entries as strings. The fifth (last) header line only 
-	# contains X,Y,Z and marker numbers.
+    # Open trc file with read only access
+    trc_fid = open(os.path.join(path_name, file_name), 'r')
 
-	trc_lines = trc_fid.readlines()
-	trc_fid.close
+    # Process first four header lines and store all entries as strings. The fifth (last) header line only
+    # contains X,Y,Z and marker numbers.
 
-	# No useful information from the first header line
-	
-	h_line2 = trc_lines[1] # Second line, contains information headings
-	h_line2_entries = h_line2.split()
-	
-	h_line3 = trc_lines[2] # Third line, contains information values
-	h_line3_entries = h_line3.split()
-	
-	h_line4 = trc_lines[3] # Fourth line, contains marker labels
-	h_line4_entries = h_line4.split()
+    trc_lines = trc_fid.readlines()
+    trc_fid.close
 
-	# Create a dictionary to structure trc file
-	trcContents = {}
+    # No useful information from the first header line
 
-	# The dictionary contains two parents
-	trcContents["Information"] = {}
-	trcContents["Data"] = {}
+    h_line2 = trc_lines[1]  # Second line, contains information headings
+    h_line2_entries = h_line2.split()
 
-	# Add the 'file_name' and 'path_name' variables to trcContents.Information
-	
-	trcContents["Information"]["FileName"] = file_name
-	trcContents["Information"]["PathName"] = path_name
+    h_line3 = trc_lines[2]  # Third line, contains information values
+    h_line3_entries = h_line3.split()
 
-	# Add header information to the trcContents.Information
+    h_line4 = trc_lines[3]  # Fourth line, contains marker labels
+    h_line4_entries = h_line4.split()
 
-	trcContents["Information"][h_line2_entries[0]] = np.float32(h_line3_entries[0])
-	trcContents["Information"][h_line2_entries[1]] = np.float32(h_line3_entries[1])
-	trcContents["Information"][h_line2_entries[2]] = np.float32(h_line3_entries[2])
+    # Create a dictionary to structure trc file
+    trc_contents = {"Information": {}, "Data": {}}
 
-	# The number of markers is a positive integer, store in a variable for convienient use
-	num_markers = np.uint16(h_line3_entries[3])
+    # The dictionary contains two parents
 
-	trcContents["Information"][h_line2_entries[3]] = num_markers
-	trcContents["Information"][h_line2_entries[4]] = h_line3_entries[4]
-	trcContents["Information"][h_line2_entries[5]] = np.float32(h_line3_entries[5])
-	trcContents["Information"][h_line2_entries[6]] = np.uint32(h_line3_entries[6])
+    # Add the 'file_name' and 'path_name' variables to trcContents.Information
 
-	
-	if np.size(h_line3_entries) > 7: # Some TRC files contain additional entries
-		trcContents["Information"][h_line2_entries[7]] = np.uint32(h_line3_entries[7])
-		
-	# Skipping all five header lines, organise the data into three matrices: 
-	# a 32-bit unsigned int array containing the frame numbers
-	# a single precision array containing times
-	# a double precision matrix containing the marker location values for that frame 
+    trc_contents["Information"]["FileName"] = file_name
+    trc_contents["Information"]["PathName"] = path_name
 
-	frame_numbers = []
-	time = []
-	marker_data = []
+    # Add header information to the trcContents.Information
 
-	# Line 6 in the trc file is often a '\n', but sometimes the new line is not there, so check
-	trc_line_6 = trc_lines[5]
+    trc_contents["Information"][h_line2_entries[0]] = np.float32(h_line3_entries[0])
+    trc_contents["Information"][h_line2_entries[1]] = np.float32(h_line3_entries[1])
+    trc_contents["Information"][h_line2_entries[2]] = np.float32(h_line3_entries[2])
 
-	if trc_line_6 == '\n':
-		start = 6 # Start on line 7
+    # The number of markers is a positive integer, store in a variable for convienient use
+    num_markers = np.uint16(h_line3_entries[3])
 
-	else:
-		start = 5 # Start on line 6
+    trc_contents["Information"][h_line2_entries[3]] = num_markers
+    trc_contents["Information"][h_line2_entries[4]] = h_line3_entries[4]
+    trc_contents["Information"][h_line2_entries[5]] = np.float32(h_line3_entries[5])
+    trc_contents["Information"][h_line2_entries[6]] = np.uint32(h_line3_entries[6])
 
-	for line in trc_lines[start:]:
-		frame_numbers.append(np.uint32(int(line.split('\t')[0]))) # Get frame number (integer)
-		time.append(np.float32(line.split('\t')[1]))
-		marker_data.append(np.float64(line.rsplit('\t')[2:]))
-	
-	# Convert lists of arrays to ndarray
-	marker_data = np.stack(marker_data, axis=0)
-	time = np.stack(time, axis=0)
-	frame_numbers = np.stack(frame_numbers, axis=0)
+    if np.size(h_line3_entries) > 7:  # Some TRC files contain additional entries
+        trc_contents["Information"][h_line2_entries[7]] = np.uint32(h_line3_entries[7])
 
-	# Marker labels come after the 'Frame#' and 'Time' strings
-	marker_labels = h_line4_entries[2:]
+    # Skipping all five header lines, organise the data into three matrices:
+    # a 32-bit unsigned int array containing the frame numbers
+    # a single precision array containing times
+    # a double precision matrix containing the marker location values for that frame
 
-	trcContents["Data"]["MarkerLabels"] = marker_labels
+    frame_numbers = []
+    time = []
+    marker_data = []
 
-	# Check that num_markers equals the number of marker labels, check is most likely unnecessary
-	if np.size(marker_labels) != num_markers:
-		print("Number of marker labels does not equal the number of markers, exiting")
+    # Line 6 in the trc file is often a '\n', but sometimes the new line is not there, so check
+    trc_line_6 = trc_lines[5]
 
-		return
+    if trc_line_6 == '\n':
+        start = 6  # Start on line 7
 
-	# Replace periods with underscores in marker names due to class format
-	marker_labels_WO_periods = []
-	mod_marker_labels = []
+    else:
+        start = 5  # Start on line 6
 
-	for i in range(num_markers):
-		marker_labels_WO_periods.append(marker_labels[i].replace('.','_'))
-		mod_marker_labels.append(marker_labels_WO_periods[i].replace(':','_')) # Replace colons with underscores
+    for line in trc_lines[start:]:
+        frame_numbers.append(np.uint32(int(line.split('\t')[0])))  # Get frame number (integer)
+        time.append(np.float32(line.split('\t')[1]))
+        marker_data.append(np.float64(line.rsplit('\t')[2:]))
 
-	# Store modified marker labels
-	trcContents["Data"]["ModifiedMarkerLabels"] = mod_marker_labels
+    # Convert lists of arrays to ndarray
+    marker_data = np.stack(marker_data, axis=0)
+    time = np.stack(time, axis=0)
+    frame_numbers = np.stack(frame_numbers, axis=0)
 
-	# Output the array of frames and times for comprehensiveness
-	trcContents["Data"]["FrameNums"] = frame_numbers
-	trcContents["Data"]["Time"] = time
-	trcContents["Data"]["RawData"] = marker_data
+    # Marker labels come after the 'Frame#' and 'Time' strings
+    marker_labels = h_line4_entries[2:]
 
-	# Create structure for each marker containing three column arrays of X, Y, and Z data and a num_frames x 3 all data
-	# matrix (based on laboratory coordinate frame), easily tying each marker label to its respective data.
+    trc_contents["Data"]["MarkerLabels"] = marker_labels
 
-	trcContents["Data"]["Markers"] = {}
+    # Check that num_markers equals the number of marker labels, check is most likely unnecessary
+    if np.size(marker_labels) != num_markers:
+        print("Number of marker labels does not equal the number of markers, exiting")
 
-	for i in range(1,num_markers+1):
-	
-		trcContents["Data"]["Markers"][mod_marker_labels[i-1]] = {}
-		trcContents["Data"]["Markers"][mod_marker_labels[i-1]]["X"] = marker_data[:,i*3 - 3]
-		trcContents["Data"]["Markers"][mod_marker_labels[i-1]]["Y"] = marker_data[:,i*3 - 2]
-		trcContents["Data"]["Markers"][mod_marker_labels[i-1]]["Z"] = marker_data[:,i*3 - 1]
-		trcContents["Data"]["Markers"][mod_marker_labels[i-1]]["All"] = marker_data[:,(i*3 - 3):(i*3)]
+        return
 
-	return trcContents, file_path
+    # Replace periods with underscores in marker names due to class format
+    marker_labels_WO_periods = []
+    mod_marker_labels = []
+
+    for i in range(num_markers):
+        marker_labels_WO_periods.append(marker_labels[i].replace('.', '_'))
+        mod_marker_labels.append(marker_labels_WO_periods[i].replace(':', '_'))  # Replace colons with underscores
+
+    # Store modified marker labels
+    trc_contents["Data"]["ModifiedMarkerLabels"] = mod_marker_labels
+
+    # Output the array of frames and times for comprehensiveness
+    trc_contents["Data"]["FrameNums"] = frame_numbers
+    trc_contents["Data"]["Time"] = time
+    trc_contents["Data"]["RawData"] = marker_data
+
+    # Create structure for each marker containing three column arrays of X, Y, and Z data and a num_frames x 3 all data
+    # matrix (based on laboratory coordinate frame), easily tying each marker label to its respective data.
+
+    trc_contents["Data"]["Markers"] = {}
+
+    for i in range(1, num_markers + 1):
+        trc_contents["Data"]["Markers"][mod_marker_labels[i - 1]] = {}
+        trc_contents["Data"]["Markers"][mod_marker_labels[i - 1]]["X"] = marker_data[:, i * 3 - 3]
+        trc_contents["Data"]["Markers"][mod_marker_labels[i - 1]]["Y"] = marker_data[:, i * 3 - 2]
+        trc_contents["Data"]["Markers"][mod_marker_labels[i - 1]]["Z"] = marker_data[:, i * 3 - 1]
+        trc_contents["Data"]["Markers"][mod_marker_labels[i - 1]]["All"] = marker_data[:, (i * 3 - 3):(i * 3)]
+
+    return trc_contents, file_path

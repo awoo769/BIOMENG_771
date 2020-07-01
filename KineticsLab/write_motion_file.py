@@ -38,6 +38,8 @@ def write_motion_file(grf_complete: np.ndarray, file_path: str, *headers: list):
 	# [time vector1 point1 vector2 point2 torque1 torque2]
 	for header in headers:
 		fid.write("%s\t" % (header))
+        
+	fid.write("\n")
 
 	fid.close()
 
