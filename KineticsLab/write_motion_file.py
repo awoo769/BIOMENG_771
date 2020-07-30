@@ -22,13 +22,13 @@ def write_motion_file(grf_complete: np.ndarray, file_path: str, *headers: list):
 	new_file = file_path.replace('.csv', '.mot')
 
 	# Split path to get file_name
-	file_name = file_path.rsplit('/',1)[-1]
+	file_name = file_path.rsplit(os.sep,1)[-1]
 
 	# Create new file to write to
 	fid = open(new_file, 'w+')
 
 	# Print header
-	fid.write("%s\n" % (file_name.split("\\")[-1]))
+	fid.write("%s\n" % (file_name.split(os.sep)[-1]))
 	fid.write("version=1\n")
 	fid.write("nRows=%d\n" % (m))
 	fid.write("nColumns=%d\n" % (n))

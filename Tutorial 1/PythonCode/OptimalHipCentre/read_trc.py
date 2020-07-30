@@ -71,8 +71,8 @@ def read_trc(*file_path: str):
 
     # Split into file_name and path_name
 
-    file_name = file_path.rsplit('/', 1)[-1]
-    path_name = file_path.rsplit('/', 1)[0]
+    file_name = file_path.rsplit(os.sep, 1)[-1]
+    path_name = file_path.rsplit(os.sep, 1)[0]
 
     if not file_name.strip():  # If the user selects 'cancel'
         # Display a message and re-prompt the user to select a file
@@ -82,8 +82,8 @@ def read_trc(*file_path: str):
 
         # Split into file_name and path_name
 
-        file_name = file_path.rsplit('/', 1)[-1]
-        path_name = file_path.rsplit('/', 1)[0]
+        file_name = file_path.rsplit(os.sep, 1)[-1]
+        path_name = file_path.rsplit(os.sep, 1)[0]
 
         if not file_name.strip():  # If the user selects 'cancel' again
             # Display a message
