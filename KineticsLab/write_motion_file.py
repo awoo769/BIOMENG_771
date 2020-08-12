@@ -1,5 +1,6 @@
 
 import numpy as np
+import os
 
 def write_motion_file(grf_complete: np.ndarray, file_path: str, *headers: list):
 	'''
